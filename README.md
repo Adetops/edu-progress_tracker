@@ -30,7 +30,7 @@ A web-based application for tutors and educators to track student progress acros
 1. Clone the repository:
 ```bash
 git clone <your-repo-url>
-cd edu-tracker
+cd edu-progress_tracker
 ```
 
 2. Create virtual environment:
@@ -66,7 +66,7 @@ python seed_data.py
 
 ### Adding Students
 1. Navigate to Students → Add Student
-2. Enter student name, email, and grade level
+2. Enter student name, email, and phone number
 3. Click "Add Student"
 
 ### Creating Courses

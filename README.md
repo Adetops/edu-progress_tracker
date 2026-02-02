@@ -114,10 +114,6 @@ edu-tracker/
 - [ ] Bulk import/export
 - [ ] Assignment deadlines and reminders
 
-## License
-
-MIT License - feel free to use for your own projects!
-
 ## Support
 
 For questions or issues, please open an issue on GitHub.

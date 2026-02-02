@@ -4,3 +4,4 @@ python-dotenv==1.0.0
 dnspython==2.4.2
 openpyxl==3.1.2
 gunicorn==21.2.0
+phonenumbers==9.0.22

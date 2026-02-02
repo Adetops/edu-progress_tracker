@@ -43,8 +43,10 @@ def add_student():
             return redirect(url_for('students_list'))
         except ValueError as e:
             flash(str(e), 'danger')
+            return render_template('add_student.html')
         except Exception as e:
-            flash('An error occured. Please try again.', 'danger')
+            flash('An error occurred. Please try again.', 'danger')
+            return render_template('add_student.html')
     
     return render_template('add_student.html')
 
@@ -91,8 +93,10 @@ def add_course():
             return redirect(url_for(courses_list))
         except ValueError as e:
             flash(str(e), 'danger')
+            return render_template('add_course.html')
         except Exception as e:
-            flash('An error occured. Please try again.', 'danger')
+            flash('An error occurred. Please try again.', 'danger')
+            return render_template('add_course.html')
 
     return render_template('add_course.html')
 

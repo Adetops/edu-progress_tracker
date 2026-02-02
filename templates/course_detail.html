@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ course.title }} - Edu Tracker{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ url_for('main.courses_list') }}">Courses</a></li>
+        <li class="breadcrumb-item active">{{ course.title }}</li>
+    </ol>
+</nav>
+
+<div class="row mb-4">
+    <div class="col-md-8">
+        <h1>{{ course.title }}</h1>
+        <p class="lead">{{ course.description }}</p>
+        {% if course.topics %}
+            <div class="mb-3">
+                <strong>Topics:</strong>
+                {% for topic in course.topics %}
+                    <span class="badge bg-secondary">{{ topic }}</span>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h5 class="mb-0"><i class="bi bi-people"></i> Student Progress</h5>
+    </div>
+    <div class="card-body">
+        {% if student_progress %}
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Student</th>
+                            <th>Activities</th>
+                            <th>average Score</th>
+                            {% if course.topics %}
+                                <th>Completion</th>
+                            {% endif %}
+                            <th>Last Activity</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for progress in student_progress %}
+                            <tr>
+                                <td>
+                                    <a href="{{ url_for('main.student_detail', student_id=progress.student_id) }}">
+                                        {{ progress.student_name }}
+                                    </a>
+                                </td>
+                                <td>{{ progress.total_activities }}</td>
+                                <td>
+                                    {% if progress.average_score %}
+                                        <span class="badge bg-{% if progress.average_score >= 80 %}success{% elif progress.average_score >= 60 %}warning{% else %}danger{% endif %}">
+                                            {{ progress.average_score }}%
+                                        </span>
+                                    {% else %}
+                                        <span class="text-muted">-</span>
+                                    {% endif %}
+                                </td>
+                                {% if course.topics %}
+                                    <td>
+                                        {% if progress.completion_rate %}
+                                            <div class="progress" style="height: 20px;">
+                                                <div class="progress-bar" role="progressbar" 
+                                                     style="width: {{ progress.completion_rate }}%"
+                                                     aria-valuenow="{{ progress.completion_rate }}" 
+                                                     aria-valuemin="0" aria-valuemax="100">
+                                                    {{ progress.completion_rate }}%
+                                                </div>
+                                            </div>
+                                        {% else %}
+                                            <span class="text-muted">-</span>
+                                        {% endif %}
+                                    </td>
+                                {% endif %}
+                                <td>
+                                    {% if progress.last_activity %}
+                                        {{ progress.last_activity }}
+                                    {% else %}
+                                        <span class="text-muted">-</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p class="text-muted">No student progress data yet.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

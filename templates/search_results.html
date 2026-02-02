@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block title %}Search: {{ query }} - Edu Progress Tracker{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Search Results for "{{ query }}"</h1>
+
+{% if students or courses %}
+    {% if students %}
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">Students ({{ students|length }})</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    {% for student in students %}
+                        <div class="col-md-6 mb-3">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h6 class="card-title">{{ student.name }}</h6>
+                                    <p class="card-text">{{ student.email }}</p>
+                                    <a href="{{ url_for('main.student_detail', student_id=student._id) }}" class="btn btn-sm btn-primary">View</a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    {% endif %}
+    
+    {% if courses %}
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Courses ({{ courses|length }})</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    {% for course in courses %}
+                        <div class="col-md-6 mb-3">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h6 class="card-title">{{ course.title }}</h6>
+                                    <p class="card-text">{{ course.description[:100] }}...</p>
+                                    <a href="{{ url_for('main.course_detail', course_id=course._id) }}" class="btn btn-sm btn-success">View</a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% else %}
+    <div class="alert alert-info">
+        No results found for "{{ query }}". Try a different search term.
+    </div>
+{% endif %}
+{% endblock %}

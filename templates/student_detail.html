@@ -1,0 +1,134 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ student.name }} - Edu Tracker{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ url_for('main.students_list') }}">Students</a></li>
+        <li class="breadcrumb-item active">{{ student.name }}</li>
+    </ol>
+</nav>
+
+<div class="row mb-4">
+    <div class="col-md-8">
+        <h1>{{ student.name }}</h1>
+        <p class="text-muted">
+            <i class="bi bi-envelope"></i> {{ student.email }}
+            {% if student.phone_number %}
+                | <i class="bi bi-phone"></i> Number {{ student.phone_number }}
+            {% endif %}
+        </p>
+    </div>
+    <div class="col-md-4 text-end">
+        <a href="{{ url_for('main.export_student_report', student_id=student._id) }}" class="btn btn-success me-2">
+            <i class="bi bi-download"></i> Export Report
+        </a>
+        <a href="{{ url_for('main.log_activity') }}" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Log Activity
+        </a>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card stat-card">
+            <div class="stat-number">{{ total_activities }}</div>
+            <div>Total Activities</div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card stat-card">
+            <div class="stat-number">{{ avg_score }}%</div>
+            <div>Average Score</div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card stat-card">
+            <div class="stat-number">{{ courses|length }}</div>
+            <div>Courses</div>
+        </div>
+    </div>
+</div>
+
+{% if course_progress %}
+<div class="card mb-4">
+    <div class="card-header">
+        <h5 class="mb-0"><i class="bi bi-graph-up"></i> Progress by Course</h5>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            {% for progress in course_progress %}
+                <div class="col-md-6 mb-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h6 class="card-title">{{ progress.course_title }}</h6>
+                            <div class="mb-2">
+                                <small class="text-muted">Activities:</small>
+                                <strong>{{ progress.total_activities }}</strong>
+                            </div>
+                            {% if progress.avg_score %}
+                                <div class="mb-2">
+                                    <small class="text-muted">Average Score:</small>
+                                    <strong>{{ progress.avg_score }}%</strong>
+                                </div>
+                            {% endif %}
+                            {% if progress.last_activity %}
+                                <div>
+                                    <small class="text-muted">Last Activity:</small>
+                                    <strong>{{ progress.last_activity }}</strong>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<div class="card">
+    <div class="card-header">
+        <h5 class="mb-0"><i class="bi bi-activity"></i> Activity History</h5>
+    </div>
+    <div class="card-body">
+        {% if activities %}
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Type</th>
+                            <th>Topic</th>
+                            <th>Score</th>
+                            <th>Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for activity in activities %}
+                            <tr>
+                                <td>{{ activity.completed_at }}</td>
+                                <td><span class="badge bg-secondary">{{ activity.activity_type }}</span></td>
+                                <td>{{ activity.topic }}</td>
+                                <td>
+                                    {% if activity.score %}
+                                        <span class="badge bg-{% if activity.score >= 80 %}success{% elif activity.score >= 60 %}warning{% else %}danger{% endif %}">
+                                            {{ activity.score }}%
+                                        </span>
+                                    {% else %}
+                                        <span class="text-muted">-</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ activity.notes or '-' }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p class="text-muted">No activities logged yet.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

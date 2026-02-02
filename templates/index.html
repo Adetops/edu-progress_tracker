@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - Edu Tracker{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Dashboard</h1>
+
+<div class="row">
+    <div class="col-md-3">
+        <div class="card stat-card">
+            <i class="bi bi-people-fill text-primary" style="font-size: 2.5rem;"></i>
+            <div class="stat-number">{{ stats.total_students }}</div>
+            <div>Total Students</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stat-card">
+            <i class="bi bi-book-fill text-success" style="font-size: 2.5rem;"></i>
+            <div class="stat-number">{{ stats.total_courses }}</div>
+            <div>Active Courses</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stat-card">
+            <i class="bi bi-clipboard-check-fill text-info" style="font-size: 2.5rem;"></i>
+            <div class="stat-number">{{ stats.total_activities }}</div>
+            <div>Total Activities</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stat-card">
+            <i class="bi bi-graph-up text-warning" style="font-size: 2.5rem;"></i>
+            <div class="stat-number">{{ stats.avg_score }}%</div>
+            <div>Average Score</div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="bi bi-people"></i> Students</h5>
+            </div>
+            <div class="card-body">
+                {% if students %}
+                    <ul class="list-group list-group-flush">
+                        {% for student in students[:5] %}
+                            <li class="list-group-item">
+                                <a href="{{ url_for('main.student_detail', student_id=student._id) }}">
+                                    {{ student.name }}
+                                </a>
+                                <small class="text-muted">{{ student.email }}</small>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                    {% if students|length > 5 %}
+                        <div class="text-center mt-2">
+                            <a href="{{ url_for('main.students_list') }}" class="btn btn-sm btn-outline-primary">View All</a>
+                        </div>
+                    {% endif %}
+                {% else %}
+                    <p class="text-muted">No students yet. <a href="{{ url_for('main.add_student') }}">Add one!</a></p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0"><i class="bi bi-activity"></i> Recent Activities</h5>
+            </div>
+            <div class="card-body">
+                {% if recent_activities %}
+                    <ul class="list-group list-group-flush">
+                        {% for activity in recent_activities[:5] %}
+                            <li class="list-group-item">
+                                <strong>{{ activity.topic }}</strong>
+                                <span class="badge bg-secondary">{{ activity.activity_type }}</span>
+                                {% if activity.score %}
+                                    <span class="badge bg-info">{{ activity.score }}%</span>
+                                {% endif %}
+                                <br>
+                                <small class="text-muted">{{ activity.completed_at }}</small>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p class="text-muted">No activities yet. <a href="{{ url_for('main.log_activity') }}">Log one!</a></p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="text-center mt-4">
+    <a href="{{ url_for('main.log_activity') }}" class="btn btn-primary btn-lg">
+        <i class="bi bi-plus-circle"></i> Log New Activity
+    </a>
+</div>
+{% endblock %}

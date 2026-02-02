@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block title %}Add Course - Edu Tracker{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Add New Course</h1>
+
+<div class="card">
+    <div class="card-body">
+        <form method="POST">
+            <div class="mb-3">
+                <label for="title" class="form-label">Course Title *</label>
+                <input type="text" class="form-control" id="title" name="title" required>
+            </div>
+            
+            <div class="mb-3">
+                <label for="description" class="form-label">Description *</label>
+                <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
+            </div>
+            
+            <div class="mb-3">
+                <label for="topics" class="form-label">Topics (comma-separated)</label>
+                <input type="text" class="form-control" id="topics" name="topics" placeholder="e.g., Algebra, Geometry, Calculus">
+                <small class="text-muted">Separate topics with commas</small>
+            </div>
+            
+            <button type="submit" class="btn btn-success">Add Course</button>
+            <a href="{{ url_for('main.courses_list') }}" class="btn btn-secondary">Cancel</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

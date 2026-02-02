@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block title %}Log Activity - Edu Tracker{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Log New Activity</h1>
+
+<div class="card">
+    <div class="card-body">
+        <form method="POST">
+            <div class="mb-3">
+                <label for="student_id" class="form-label">Student *</label>
+                <select class="form-select" id="student_id" name="student_id" required>
+                    <option value="">Select a student...</option>
+                    {% for student in students %}
+                        <option value="{{ student._id }}">{{ student.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="mb-3">
+                <label for="course_id" class="form-label">Course *</label>
+                <select class="form-select" id="course_id" name="course_id" required>
+                    <option value="">Select a course...</option>
+                    {% for course in courses %}
+                        <option value="{{ course._id }}">{{ course.title }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="mb-3">
+                <label for="activity_type" class="form-label">Activity Type *</label>
+                <select class="form-select" id="activity_type" name="activity_type" required>
+                    <option value="">Select type...</option>
+                    <option value="lesson">Lesson</option>
+                    <option value="assignment">Assignment</option>
+                    <option value="quiz">Quiz</option>
+                    <option value="test">Test</option>
+                    <option value="project">Project</option>
+                </select>
+            </div>
+            
+            <div class="mb-3">
+                <label for="topic" class="form-label">Topic/Title *</label>
+                <input type="text" class="form-control" id="topic" name="topic" required placeholder="e.g., Chapter 5 Quiz">
+            </div>
+            
+            <div class="mb-3">
+                <label for="score" class="form-label">Score (0-100, optional)</label>
+                <input type="number" class="form-control" id="score" name="score" min="0" max="100">
+            </div>
+            
+            <div class="mb-3">
+                <label for="notes" class="form-label">Notes (optional)</label>
+                <textarea class="form-control" id="notes" name="notes" rows="2"></textarea>
+            </div>
+            
+            <button type="submit" class="btn btn-primary">Log Activity</button>
+            <a href="{{ url_for('main.index') }}" class="btn btn-secondary">Cancel</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

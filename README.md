@@ -10,14 +10,13 @@ A web-based application for tutors and educators to track student progress acros
 - **Progress Tracking**: View detailed analytics and progress reports
 - **Search**: Find students and courses quickly
 - **Export**: Download student reports in Excel format
-- **Auth**: Tutor or educator authentication before access to students' dashboard
+- **Auth**: Tutor/Admin/Parent authentication before access to students' dashboard
 
 ## Tech Stack
 
 - **Backend**: Python, Flask
 - **Database**: MongoDB Atlas
 - **Frontend**: Bootstrap 5, HTML/CSS
-- **Charts**: (Optional - can add Chart.js)
 
 ## Setup Instructions
 
@@ -89,8 +88,10 @@ python seed_data.py
 ```
 edu-tracker/
 ├── app.py              # Main Flask application
-├── models.py           # Database models and operations
+├── auth.py             # User roles authentication
 ├── config.py           # Configuration
+├── decorators.py       # User access decorators
+├── models.py           # Database models and operations
 ├── routes.py           # Routes
 ├── requirements.txt    # Python dependencies
 ├── .env               # Environment variables (not in git)
@@ -107,12 +108,19 @@ edu-tracker/
 
 ## Future Enhancements
 
-- [ ] User authentication
 - [ ] Email notifications
 - [ ] Advanced analytics and charts
 - [ ] Mobile app
 - [ ] Bulk import/export
 - [ ] Assignment deadlines and reminders
+- [ ] Etc.
+
+
+## 👤 Author
+
+**Heritage Adeleke**
+Backend Engineer
+
 
 ## Support
 

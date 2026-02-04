@@ -1,31 +1,82 @@
-{% extends 'base.html' %}
-
-{% block title %}Add Student - Edu Tracker{% endblock %}
-
-{% block content %}
+{% extends 'base.html' %} {% block title %}Add Student - Edu Tracker{% endblock
+%} {% block content %}
 <h1 class="mb-4">Add New Student</h1>
 
 <div class="card">
-    <div class="card-body">
-        <form method="POST">
-            <div class="mb-3">
-                <label for="name" class="form-label">Full Name *</label>
-                <input type="text" class="form-control" id="name" name="name" required>
-            </div>
-            
-            <div class="mb-3">
-                <label for="email" class="form-label">Email *</label>
-                <input type="email" class="form-control" id="email" name="email" required>
-            </div>
-            
-            <div class="mb-3">
-                <label for="phone_number" class="form-label">Phone Number</label>
-                <input type="text" class="form-control" id="phone_number" name="phone_number" placeholder="+234 1234567890">
-            </div>
-            
-            <button type="submit" class="btn btn-primary">Add Student</button>
-            <a href="{{ url_for('main.students_list') }}" class="btn btn-secondary">Cancel</a>
-        </form>
-    </div>
+  <div class="card-body">
+    <form method="POST">
+      <div class="mb-3">
+        <label for="name" class="form-label">Full Name *</label>
+        <input
+          type="text"
+          class="form-control"
+          id="name"
+          name="name"
+          required
+        />
+      </div>
+
+      <div class="mb-3">
+        <label for="email" class="form-label">Email *</label>
+        <input
+          type="email"
+          class="form-control"
+          id="email"
+          name="email"
+          required
+        />
+      </div>
+
+      <div class="mb-3">
+        <label for="phone_number" class="form-label">Phone Number</label>
+        <input
+          type="text"
+          class="form-control"
+          id="phone_number"
+          name="phone_number"
+          placeholder="+234 1234567890"
+        />
+      </div>
+
+      <div class="mb-3 form-check">
+        <input
+          type="checkbox"
+          class="form-check-input"
+          id="create_account"
+          name="create_account"
+        />
+        <label class="form-check-label" for="create_account">
+          Create login account for this student
+        </label>
+      </div>
+
+      <div class="mb-3" id="password-field" style="display: none">
+        <label for="password" class="form-label">Initial Password</label>
+        <input
+          type="password"
+          class="form-control"
+          id="password"
+          name="password"
+          minlength="6"
+        />
+        <small class="text-muted">Student can change this later</small>
+      </div>
+
+      <script>
+        document
+          .getElementById("create_account")
+          .addEventListener("change", function () {
+            document.getElementById("password-field").style.display = this
+              .checked
+              ? "block"
+              : "none";
+          });
+      </script>
+      <button type="submit" class="btn btn-primary">Add Student</button>
+      <a href="{{ url_for('main.students_list') }}" class="btn btn-secondary"
+        >Cancel</a
+      >
+    </form>
+  </div>
 </div>
 {% endblock %}

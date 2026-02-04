@@ -1,18 +1,24 @@
 from config import Config
 from datetime import datetime, timezone, timedelta
 from bson import ObjectId
-from flask import jsonify, request
+from flask import jsonify, flash, render_template
 import phonenumbers
+from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import UserMixin
 
 
 class Database:
     def __init__(self):
         self.client = Config.get_client()
         self.db = self.client[Config.DB]
+        
+        self.db.users.create_index('email', unique=True)
+        self.db.students.create_index('email', unique=True)
 
     
     # Students collection
-    def new_student(self, name, email, phone_number):
+    def new_student(self, name, email, phone_number, create_account=False, password=None):
+        """Add new student and optionally create a user account"""
         # Validations
         if not name or not name.strip():
             raise ValueError("Name is required!")
@@ -23,7 +29,7 @@ class Database:
             raise ValueError("Invalid email format")
         
         # check for duplicate email
-        existing = self.db.students.find_one({'email': email})
+        existing = self.db.students.find_one({'email': email.lower()})
         if existing:
             raise ValueError("A student with this email already exists.")
 
@@ -35,14 +41,25 @@ class Database:
             raise ValueError("Invalid phone number format")
         
         student = {
-            'name': name,
-            'email': email,
+            'name': name.strip(),
+            'email': email.strip().lower(),
             'phone_number': phone_number,
             'created_at': datetime.now(timezone.utc).isoformat()
         }
         
         result = self.db.students.insert_one(student)
-        return str(result.inserted_id)
+        student_id = str(result.inserted_id)
+        
+        # Create user account if requested
+        if create_account and password:
+            try:
+                user_id = self.create_user(email, password, name, role='student')
+                self.link_student_to_user(user_id, student_id)
+            except ValueError as e:
+                flash(str(e), 'danger')
+                return render_template('add_student.html')
+        
+        return student_id
     
     
     # Retrieve list of all students
@@ -227,3 +244,86 @@ class Database:
             'recent_activities': recent_activities,
             'avg': average_score
         }
+
+
+    # ==================== USER METHODS ====================
+    
+    def create_user(self, email, password, name, role='teacher'):
+        """Create a new user account"""
+        if not email or not password or not name:
+            raise ValueError('All email, password, and name are required.')
+        
+        # Validate role
+        valid_roles = ['teacher', 'student', 'parent', 'admin']
+        if role not in valid_roles:
+            raise ValueError(f"Role must be one of: {', '.join(valid_roles)}")
+        
+        # Check if user exists
+        existing = self.db.users.find_one({'email': email.lower()})
+        if existing:
+            raise ValueError('A user with this email already exists.')
+        
+        user = {
+            'email': email.lower(),
+            'password_hash': generate_password_hash(password),
+            'name': name,
+            'role': role,
+            'created_at': datetime.now(timezone.utc).isoformat(),
+            'is_active': True,
+            'student_id': None      # Will be set if role is a student
+        }
+        
+        result = self.db.users.insert_one(user)
+        return str(result.inserted_id)
+    
+    def get_user_by_email(self, email):
+        """Get user by his/her email"""
+        user = self.db.users.find_one({'email': email.lower()})
+        if user:
+            user['_id'] = str(user['_id'])
+        return user
+    
+    def get_user_by_id(self, user_id):
+        """ Get user by ID"""
+        try:
+            user = self.db.users.find_one({'_id': ObjectId(user_id)})
+            if user:
+                user['_id'] = str(user['_id'])
+                # Ensure is_active exists in the data
+                if 'is_active' not in user:
+                    user['is_active'] = True
+            return user
+        except Exception as e:
+            print(f"Error in get_user_by_id: {e}")
+            return None
+
+    def verify_password(self, email, password):
+        """Verify user password"""
+        user = self.get_user_by_email(email)
+        if user and check_password_hash(user['password_hash'], password):
+            return user
+        return None
+    
+    def update_user_password(self, user_id, new_password):
+        """Update user password"""
+        self.db.users.update_one(
+            {'_id': ObjectId(user_id)},
+            {'$set': {'password_hash': generate_password_hash(new_password)}}
+        )
+        
+    def link_student_to_user(self, user_id, student_id):
+        """Link a student profile to a user account"""
+        self.db.users.update_one(
+            {'_id': ObjectId(user_id)},
+            {'$set': {'student_id': student_id}}
+        )
+    
+    def get_all_users(self):
+        """Admin retrieve profile of all users"""
+        users = list(self.db.users.find())
+        for user in users:
+            user['_id'] = str(user['_id'])
+            user.pop('password_hash', None)
+        return users
+    
+    
